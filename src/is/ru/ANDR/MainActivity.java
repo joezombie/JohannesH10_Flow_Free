@@ -1,7 +1,9 @@
 package is.ru.ANDR;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 public class MainActivity extends Activity {
     /**
@@ -11,5 +13,22 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+    }
+
+    public void continueFromLast(View view){
+
+    }
+
+    public void selectBoard(View view){
+        Intent intent = new Intent(this, SelectBoardActivity.class);
+        startActivity(intent);
+    }
+
+    public void selectBoardTimeTrial(View view){
+
+    }
+
+    public void settings(View view){
+
     }
 }

@@ -3,9 +3,9 @@
               android:orientation="vertical"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent">
-
-    <ListView android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:id="@+id/select_board_list">
-    </ListView>
+    <ExpandableListView
+        android:id="@+id/select_board_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+    </ExpandableListView>
 </LinearLayout>
