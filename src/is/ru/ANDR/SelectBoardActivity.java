@@ -2,8 +2,11 @@ package is.ru.ANDR;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +33,17 @@ public class SelectBoardActivity extends Activity {
         listAdapter = new BoardExpandableListAdapter(this, groupList, childList);
 
         listView.setAdapter(listAdapter);
+
+        listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                Toast.makeText(getApplicationContext(), groupList.get(groupPosition) + " : " + childList.get(groupList.get(groupPosition)).get(childPosition), Toast.LENGTH_SHORT).show();
+                for(int i = 0; i < groupList.size(); i++){
+                    parent.collapseGroup(i);
+                }
+                return true;
+            }
+        });
     }
 
     private void getListData(){
