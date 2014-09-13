@@ -16,7 +16,8 @@ public class MainActivity extends Activity {
     }
 
     public void continueFromLast(View view){
-
+        Intent intent = new Intent(this, PlayActivity.class);
+        startActivity(intent);
     }
 
     public void selectBoard(View view){

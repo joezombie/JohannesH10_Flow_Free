@@ -13,5 +13,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".SelectBoardActivity" android:label="Select Board"/>
+        <activity android:name=".PlayActivity"/>
     </application>
 </manifest>
