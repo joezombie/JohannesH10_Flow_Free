@@ -1,6 +1,7 @@
 package is.ru.ANDR;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ExpandableListAdapter;
@@ -37,11 +38,21 @@ public class SelectBoardActivity extends Activity {
         listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                Toast.makeText(getApplicationContext(), groupList.get(groupPosition) + " : " + childList.get(groupList.get(groupPosition)).get(childPosition), Toast.LENGTH_SHORT).show();
-                for(int i = 0; i < groupList.size(); i++){
-                    parent.collapseGroup(i);
-                }
+                Intent intent = new Intent(listView.getContext(), PlayActivity.class);
+                startActivity(intent);
                 return true;
+            }
+        });
+        listView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                /*
+                for(int i = 0; i < groupList.size() - 1; i++){
+                    if(groupPosition != i) {
+                        parent.collapseGroup(i);
+                    }
+                }*/
+                return false;
             }
         });
     }
