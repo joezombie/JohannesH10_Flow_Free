@@ -10,18 +10,20 @@ public class Circle {
     protected int column;
     protected int color;
 
-    public Circle(int row, int column, int color){
+    public Circle(int column, int row){
         this.row = row;
         this.column = column;
-        this.color = color;
     }
 
     public int getRow() { return this.row; }
     public int getColumn() { return this.column; }
-    public int getColor() { return this.color; }
 
     public boolean isLocatedAt(int row, int column){
         return this.row == row && this.column == column;
+    }
+
+    public boolean isLocatedAt(Coordinate coordinate){
+        return ( this.getRow() == coordinate.getRow() && this.getColumn() == coordinate.getCol() );
     }
 
     @Override
@@ -29,11 +31,11 @@ public class Circle {
         boolean results = false;
         if (other instanceof  Circle){
             Circle otherCircle = (Circle) other;
-            results = (otherCircle.getColumn() == this.getColumn()
-                       && otherCircle.getRow() == this.getRow()
-                       && otherCircle.getColor() == this.getColor() );
+            results = ( otherCircle.getColumn() == this.getColumn() && otherCircle.getRow() == this.getRow() );
         }
 
         return results;
     }
+
+
 }

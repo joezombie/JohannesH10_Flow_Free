@@ -22,10 +22,8 @@ public class BoardView extends View {
     private Paint paintGrid = new Paint();
     private Paint paintPath = new Paint();
 
-    private CellPath cellPath = new CellPath();
+    private CellPath cellPath = new CellPath(0,3,3,4);
     private Path path = new Path();
-
-    private ArrayList<Circle> CircleList = new ArrayList<Circle>();
 
     public BoardView(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -39,9 +37,6 @@ public class BoardView extends View {
         this.paintPath.setStrokeCap(Paint.Cap.ROUND);
         this.paintPath.setStrokeJoin(Paint.Join.ROUND);
         this.paintPath.setAntiAlias(true);
-
-        CircleList.add(new Circle(1, 2, 1));
-        CircleList.add(new Circle(3, 4, 1));
     }
 
     private int xToCol( int x ) {
@@ -95,7 +90,7 @@ public class BoardView extends View {
             }
         }
 
-        for (Circle c : this.CircleList){
+        for (Circle c : this.cellPath.getCircleList()){
             float radius = this.cellWidth / 4;
             canvas.drawCircle(colToX(c.getColumn()) + this.cellWidth/2, rowToY(c.getRow()) + this.cellHeight/2, radius, this.paintPath);
         }
@@ -127,8 +122,7 @@ public class BoardView extends View {
         }
 
         if (event.getAction() == MotionEvent.ACTION_DOWN){
-            for(Circle circle : CircleList){
-                Log.v("r:", Integer.toString(r) + " c:" + Integer.toString(c));
+            for(Circle circle : this.cellPath.getCircleList()){
                 if(circle.isLocatedAt(r, c)){
                     this.cellPath.reset();
                     this.cellPath.addCoordinate(new Coordinate(c,r));
@@ -136,7 +130,7 @@ public class BoardView extends View {
             }
 
         } else if (event.getAction() == MotionEvent.ACTION_MOVE){
-            if (!this.cellPath.isEmpty()){
+            if (!this.cellPath.isEmpty() && !this.cellPath.isConnected()){
                 Coordinate lastCoordinate = this.cellPath.getLastCoordinate();
                 if( areNeighbours(lastCoordinate.getCol(), lastCoordinate.getRow(), c, r)){
                     this.cellPath.addCoordinate(new Coordinate(c,r));
