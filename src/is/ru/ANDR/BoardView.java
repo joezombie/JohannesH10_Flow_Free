@@ -21,8 +21,9 @@ public class BoardView extends View {
     private Rect rect = new Rect();
     private Paint paintGrid = new Paint();
     private Paint paintPath = new Paint();
-
-    private CellPath cellPath = new CellPath(0,3,3,4);
+    private Paint paintCircle = new Paint();
+    private ArrayList<CellPath> cellPaths = new ArrayList<CellPath>();
+    private CellPath currentCellPath;
     private Path path = new Path();
 
     public BoardView(Context context, AttributeSet attrs){
@@ -37,6 +38,14 @@ public class BoardView extends View {
         this.paintPath.setStrokeCap(Paint.Cap.ROUND);
         this.paintPath.setStrokeJoin(Paint.Join.ROUND);
         this.paintPath.setAntiAlias(true);
+
+        this.paintCircle.setStyle(Paint.Style.FILL_AND_STROKE);
+        //this.paintCircle.setStrokeCap(Paint.Cap.ROUND);
+        this.paintCircle.setStrokeWidth(4);
+
+
+        cellPaths.add( new CellPath(0,3,3,4, Color.GREEN) );
+        cellPaths.add( new CellPath(3,1,4,2, Color.BLUE) );
     }
 
     private int xToCol( int x ) {
@@ -89,25 +98,31 @@ public class BoardView extends View {
                 canvas.drawRect(this.rect, this.paintGrid);
             }
         }
-
-        for (Circle c : this.cellPath.getCircleList()){
-            float radius = this.cellWidth / 4;
-            canvas.drawCircle(colToX(c.getColumn()) + this.cellWidth/2, rowToY(c.getRow()) + this.cellHeight/2, radius, this.paintPath);
-        }
-
-        this.path.reset();
-
-        if ( !this.cellPath.isEmpty() ){
-            List<Coordinate> coordinateList = this.cellPath.getCoordinates();
-            Coordinate coordinate = coordinateList.get(0);
-            this.path.moveTo(colToX(coordinate.getCol()) + this.cellWidth / 2, rowToY(coordinate.getRow()) + this.cellHeight / 2);
-            for (int i = 1; i < coordinateList.size(); ++i){
-                coordinate = coordinateList.get(i);
-                this.path.lineTo(colToX(coordinate.getCol()) + this.cellWidth / 2, rowToY(coordinate.getRow()) + this.cellHeight / 2);
+        for(CellPath cellPath : this.cellPaths){
+            this.paintCircle.setColor(cellPath.getColor());
+            for (Circle c : cellPath.getCircleList()){
+                float radius = this.cellWidth / 4;
+                canvas.drawCircle(colToX(c.getColumn()) + this.cellWidth/2, rowToY(c.getRow()) + this.cellHeight/2, radius, this.paintCircle);
             }
         }
 
-        canvas.drawPath(this.path, this.paintPath);
+
+
+        for(CellPath cellPath : this.cellPaths) {
+            this.path.reset();
+            if (!cellPath.isEmpty()) {
+                List<Coordinate> coordinateList = cellPath.getCoordinates();
+                Coordinate coordinate = coordinateList.get(0);
+                this.path.moveTo(colToX(coordinate.getCol()) + this.cellWidth / 2, rowToY(coordinate.getRow()) + this.cellHeight / 2);
+                for (int i = 1; i < coordinateList.size(); ++i) {
+                    coordinate = coordinateList.get(i);
+                    this.path.lineTo(colToX(coordinate.getCol()) + this.cellWidth / 2, rowToY(coordinate.getRow()) + this.cellHeight / 2);
+                }
+                this.paintPath.setColor(cellPath.getColor());
+                canvas.drawPath(this.path, this.paintPath);
+            }
+
+        }
     }
 
     @Override
@@ -116,35 +131,47 @@ public class BoardView extends View {
         int y = (int) event.getY();
         int c = xToCol( x );
         int r = yToRow( y );
+        Coordinate newCoordinate = new Coordinate(c, r);
 
         if (c >= NUMBER_OF_CELLS || r >= NUMBER_OF_CELLS){
             return true;
         }
 
         if (event.getAction() == MotionEvent.ACTION_DOWN){
-            for(Circle circle : this.cellPath.getCircleList()){
-                if(circle.isLocatedAt(r, c)){
-                    this.cellPath.reset();
-                    this.cellPath.addCoordinate(new Coordinate(c,r));
+            for(CellPath cellPath : this.cellPaths) {
+                for (Circle circle : cellPath.getCircleList()) {
+                    if (circle.isLocatedAt(r, c)) {
+                        cellPath.reset();
+                        cellPath.addCoordinate(newCoordinate);
+                        this.currentCellPath = cellPath;
+                    }
                 }
             }
 
         } else if (event.getAction() == MotionEvent.ACTION_MOVE){
-            if (!this.cellPath.isEmpty() && !this.cellPath.isConnected()){
-                Coordinate lastCoordinate = this.cellPath.getLastCoordinate();
-                if( areNeighbours(lastCoordinate.getCol(), lastCoordinate.getRow(), c, r)){
-                    this.cellPath.addCoordinate(new Coordinate(c,r));
+
+            boolean coordinateIsOccupied = false;
+            for(CellPath cellPath: this.cellPaths){
+                if(cellPath != this.currentCellPath){
+                    coordinateIsOccupied = coordinateIsOccupied || cellPath.occupiesCoordinate(newCoordinate);
+                    //Log.v(newCoordinate.toString(), Boolean.toString(cellPath.occupiesCoordinate(newCoordinate)));
+                }
+            }
+            if (!currentCellPath.isEmpty() && !currentCellPath.isConnected() && !coordinateIsOccupied) {
+                Coordinate lastCoordinate = currentCellPath.getLastCoordinate();
+                if (areNeighbours(lastCoordinate.getCol(), lastCoordinate.getRow(), c, r)) {
+                    currentCellPath.addCoordinate(newCoordinate);
                     invalidate();
                 }
             }
+
+
         }
 
         return true;
     }
 
 }
-
-
 
 
 

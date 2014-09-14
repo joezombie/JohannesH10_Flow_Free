@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +13,7 @@ import java.util.List;
 /**
  * Created by Johannes Gunnar Heidarsson on 11.9.2014.
  */
+
 public class SelectBoardActivity extends Activity {
     private ExpandableListAdapter listAdapter;
     private ExpandableListView listView;
