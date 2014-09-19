@@ -30,6 +30,7 @@ public class MainActivity extends Activity {
     }
 
     public void settings(View view){
-
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
 }

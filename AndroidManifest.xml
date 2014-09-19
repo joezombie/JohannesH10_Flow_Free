@@ -14,5 +14,6 @@
         </activity>
         <activity android:name=".SelectBoardActivity" android:label="Select Board"/>
         <activity android:name=".PlayActivity"/>
+        <activity android:name=".SettingsActivity" android:label="Settings"/>
     </application>
 </manifest>

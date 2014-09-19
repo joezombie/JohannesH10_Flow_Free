@@ -1,11 +1,14 @@
 package is.ru.ANDR;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.*;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +29,12 @@ public class BoardView extends View {
     private CellPath currentCellPath;
     private Path path = new Path();
 
+    private boolean audioOn;
+    private Context context;
+
     public BoardView(Context context, AttributeSet attrs){
         super(context, attrs);
+        this.context = context;
         this.paintGrid.setStyle(Paint.Style.STROKE);
         this.paintGrid.setColor(Color.GRAY);
         this.paintGrid.setStrokeWidth(4);
@@ -46,6 +53,11 @@ public class BoardView extends View {
 
         cellPaths.add( new CellPath(0,3,3,4, Color.GREEN) );
         cellPaths.add( new CellPath(3,1,4,2, Color.BLUE) );
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+
+        // Test
+        this.audioOn = pref.getBoolean("board_audio", true);
     }
 
     private int xToCol( int x ) {
@@ -154,13 +166,23 @@ public class BoardView extends View {
             for(CellPath cellPath: this.cellPaths){
                 if(cellPath != this.currentCellPath){
                     coordinateIsOccupied = coordinateIsOccupied || cellPath.occupiesCoordinate(newCoordinate);
-                    //Log.v(newCoordinate.toString(), Boolean.toString(cellPath.occupiesCoordinate(newCoordinate)));
+
                 }
             }
             if (!currentCellPath.isEmpty() && !currentCellPath.isConnected() && !coordinateIsOccupied) {
                 Coordinate lastCoordinate = currentCellPath.getLastCoordinate();
                 if (areNeighbours(lastCoordinate.getCol(), lastCoordinate.getRow(), c, r)) {
                     currentCellPath.addCoordinate(newCoordinate);
+                    if(currentCellPath.isConnected()){
+                        if(audioOn){
+
+                            CharSequence text = "Connected :)";
+                            int duration = Toast.LENGTH_SHORT;
+
+                            Toast toast = Toast.makeText(context, text, duration);
+                            toast.show();
+                        }
+                    }
                     invalidate();
                 }
             }
