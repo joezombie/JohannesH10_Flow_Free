@@ -16,8 +16,8 @@ public class CellPath{
     protected boolean isConnected = false;
     protected int color;
 
-    public CellPath(int columnA, int rowA, int columnB, int rowB, int color){
-        this.circleArray = new Circle[]{new Circle(columnA, rowA), new Circle(columnB, rowB)};
+    public CellPath(Coordinate a, Coordinate b, int color){
+        this.circleArray = new Circle[]{new Circle(a), new Circle(b)};
         this.color = color;
     }
 

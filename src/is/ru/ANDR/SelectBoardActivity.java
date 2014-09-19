@@ -19,6 +19,7 @@ public class SelectBoardActivity extends Activity {
     private ExpandableListView listView;
     List<String> groupList;
     HashMap<String, List<String>> childList;
+    HashMap<String, PuzzleReference> puzzleMap;
 
 
     @Override
@@ -38,6 +39,11 @@ public class SelectBoardActivity extends Activity {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 Intent intent = new Intent(listView.getContext(), PlayActivity.class);
+                String puzzleName = (String) listAdapter.getChild(groupPosition, childPosition);
+                PuzzleReference puzzle = puzzleMap.get(puzzleName);
+                intent.putExtra("pack_id", puzzle.getPackId());
+                intent.putExtra("challenge_id", puzzle.getChallengeId());
+                intent.putExtra("puzzle_id", puzzle.getPuzzleId());
                 startActivity(intent);
                 return true;
             }
@@ -45,46 +51,28 @@ public class SelectBoardActivity extends Activity {
         listView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                /*
-                for(int i = 0; i < groupList.size() - 1; i++){
-                    if(groupPosition != i) {
-                        parent.collapseGroup(i);
-                    }
-                }*/
                 return false;
             }
         });
     }
 
     private void getListData(){
+        Global global = Global.getSingleInstance();
         this.groupList = new ArrayList<String>();
         this.childList = new HashMap<String, List<String>>();
+        this.puzzleMap = new HashMap<String, PuzzleReference>();
 
-        this.groupList.add("5x5");
-        this.groupList.add("6x6");
-        this.groupList.add("7x7");
-
-        List<String> five = new ArrayList<String>();
-        five.add("Level 1");
-        five.add("Level 2");
-        five.add("Level 3");
-        five.add("Level 4");
-
-        List<String> six = new ArrayList<String>();
-        six.add("Level 1");
-        six.add("Level 2");
-        six.add("Level 3");
-        six.add("Level 4");
-
-        List<String> seven = new ArrayList<String>();
-        seven.add("Level 1");
-        seven.add("Level 2");
-        seven.add("Level 3");
-        seven.add("Level 4");
-
-        childList.put(groupList.get(0), five);
-        childList.put(groupList.get(1), six);
-        childList.put(groupList.get(2), seven);
-
+        for(Pack pack : global.getPacks()){
+            this.groupList.add(pack.name);
+            List<String> puzzles = new ArrayList<String>();
+            for(Challenge challenge : pack.getChallenges()){
+                for(Puzzle puzzle : challenge.getPuzzles()){
+                    String puzzleName = challenge.name + " Level " + Integer.toString(puzzle.getId());
+                    puzzles.add(puzzleName);
+                    puzzleMap.put(puzzleName, new PuzzleReference(pack.id, challenge.id, puzzle.id));
+                }
+            }
+            childList.put(pack.name, puzzles);
+        }
     }
 }

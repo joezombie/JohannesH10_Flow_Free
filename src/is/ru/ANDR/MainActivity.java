@@ -2,10 +2,12 @@ package is.ru.ANDR;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -33,12 +35,6 @@ public class MainActivity extends Activity {
 
         try{
             global.setPacks( readPacks( getAssets().open("packs/packs.xml") ) );
-
-            for(Pack pack : global.getPacks()){
-                Log.v("Packs", pack.toString());
-            }
-
-
         } catch (IOException e){
             e.printStackTrace();
         }
@@ -47,12 +43,21 @@ public class MainActivity extends Activity {
 
     public void continueFromLast(View view){
         Intent intent = new Intent(this, PlayActivity.class);
+
+        SharedPreferences lastPuzzle = getSharedPreferences( "last_puzzle", MODE_PRIVATE );
+
+        intent.putExtra("pack_id", lastPuzzle.getInt("pack_id", 1));
+        intent.putExtra("challenge_id", lastPuzzle.getInt("challenge_id", 1));
+        intent.putExtra("puzzle_id", lastPuzzle.getInt("puzzle_id", 1));
         startActivity(intent);
+
     }
+
 
     public void selectBoard(View view){
         Intent intent = new Intent(this, SelectBoardActivity.class);
         startActivity(intent);
+
     }
 
     public void selectBoardTimeTrial(View view){
@@ -81,7 +86,6 @@ public class MainActivity extends Activity {
                     int id = Integer.parseInt(eNode.getAttribute("id"));
 
                     Pack pack = new Pack(id, name, description, fileName, readChallenges(getAssets().open(fileName)));
-
                     packs.add(pack);
                 }
             }

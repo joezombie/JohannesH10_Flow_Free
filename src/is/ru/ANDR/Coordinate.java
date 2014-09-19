@@ -19,6 +19,7 @@ public class Coordinate {
         this.row = 0;
     }
 
+
     public int getCol(){ return this.col; }
 
     public void setCol(int col) { this.col = col; }
@@ -26,6 +27,10 @@ public class Coordinate {
     public int getRow(){ return this.row; }
 
     public void setRow(int row) { this.row = row; }
+
+    public boolean isLocatedAt(Coordinate other){
+        return (this.col == other.col && this.row == other.row);
+    }
 
     @Override
     public boolean equals(Object other){

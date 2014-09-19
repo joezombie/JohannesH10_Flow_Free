@@ -3,6 +3,7 @@ package is.ru.ANDR;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.*;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -17,7 +18,9 @@ import java.util.List;
  * Created by Johannes Gunnar Heidarsson on 13.9.2014.
  */
 public class BoardView extends View {
-    private final int NUMBER_OF_CELLS = 5;
+    private final int[] colorArray = new int[]{Color.BLUE, Color.RED, Color.GREEN, Color.YELLOW, Color.MAGENTA, Color.WHITE, Color.BLACK};
+    private int colorIndex = 0;
+    private int NUMBER_OF_CELLS = 5;
     private int cellWidth;
     private int cellHeight;
 
@@ -47,37 +50,25 @@ public class BoardView extends View {
         this.paintPath.setAntiAlias(true);
 
         this.paintCircle.setStyle(Paint.Style.FILL_AND_STROKE);
-        //this.paintCircle.setStrokeCap(Paint.Cap.ROUND);
         this.paintCircle.setStrokeWidth(4);
 
-
-        cellPaths.add( new CellPath(0,3,3,4, Color.GREEN) );
-        cellPaths.add( new CellPath(3,1,4,2, Color.BLUE) );
-
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-
-        // Test
         this.audioOn = pref.getBoolean("board_audio", true);
+
     }
 
-    private int xToCol( int x ) {
-        return (x - getPaddingLeft()) / this.cellWidth;
+    public void setPuzzle(Puzzle puzzle){
+        if (puzzle != null){
+            this.NUMBER_OF_CELLS = puzzle.getSize();
+
+            for(Flow flow : puzzle.getFlows()){
+                cellPaths.add(new CellPath(flow.a, flow.b, getNextColor()));
+            }
+        }
     }
 
-    private int yToRow( int y ) {
-        return (y - getPaddingTop()) / this.cellHeight;
-    }
-
-    private int colToX( int col ) {
-        return col * this.cellWidth + getPaddingLeft() ;
-    }
-
-    private int rowToY( int row ) {
-        return row * this.cellHeight + getPaddingTop() ;
-    }
-
-    private boolean areNeighbours( int c1, int r1, int c2, int r2 ) {
-        return ( Math.abs(c1-c2) + Math.abs(r1-r2) ) == 1;
+    private int getNextColor(){
+        return colorArray[colorIndex++ % colorArray.length];
     }
 
     @Override
@@ -175,8 +166,21 @@ public class BoardView extends View {
                     currentCellPath.addCoordinate(newCoordinate);
                     if(currentCellPath.isConnected()){
                         if(audioOn){
-
+                            //TODO
                             CharSequence text = "Connected :)";
+                            int duration = Toast.LENGTH_SHORT;
+
+                            Toast toast = Toast.makeText(context, text, duration);
+                            toast.show();
+                        }
+                        boolean allConnected = true;
+                        for(CellPath cellPath : cellPaths){
+                            allConnected = allConnected && cellPath.isConnected();
+                        }
+
+                        if(allConnected){
+                            //TODO
+                            CharSequence text = "ALL Connected!!! :)";
                             int duration = Toast.LENGTH_SHORT;
 
                             Toast toast = Toast.makeText(context, text, duration);
@@ -191,6 +195,26 @@ public class BoardView extends View {
         }
 
         return true;
+    }
+
+    private int xToCol( int x ) {
+        return (x - getPaddingLeft()) / this.cellWidth;
+    }
+
+    private int yToRow( int y ) {
+        return (y - getPaddingTop()) / this.cellHeight;
+    }
+
+    private int colToX( int col ) {
+        return col * this.cellWidth + getPaddingLeft() ;
+    }
+
+    private int rowToY( int row ) {
+        return row * this.cellHeight + getPaddingTop() ;
+    }
+
+    private boolean areNeighbours( int c1, int r1, int c2, int r2 ) {
+        return ( Math.abs(c1-c2) + Math.abs(r1-r2) ) == 1;
     }
 
 }

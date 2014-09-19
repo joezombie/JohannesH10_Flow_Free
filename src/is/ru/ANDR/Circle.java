@@ -1,18 +1,20 @@
 package is.ru.ANDR;
 
 import android.graphics.Paint;
+import org.apache.http.params.CoreConnectionPNames;
 
 /**
  * Created by Johannes Gunnar Heidarsson on 13.9.2014.
  */
 public class Circle {
+
     protected int row;
     protected int column;
-    protected int color;
 
-    public Circle(int column, int row){
-        this.row = row;
-        this.column = column;
+
+    public Circle(Coordinate coordinate){
+        this.row = coordinate.getRow();
+        this.column = coordinate.getCol();
     }
 
     public int getRow() { return this.row; }
