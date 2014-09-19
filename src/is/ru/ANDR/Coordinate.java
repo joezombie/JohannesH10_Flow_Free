@@ -14,8 +14,18 @@ public class Coordinate {
         this.row = row;
     }
 
+    public Coordinate(){
+        this.col = 0;
+        this.row = 0;
+    }
+
     public int getCol(){ return this.col; }
+
+    public void setCol(int col) { this.col = col; }
+
     public int getRow(){ return this.row; }
+
+    public void setRow(int row) { this.row = row; }
 
     @Override
     public boolean equals(Object other){
@@ -29,6 +39,6 @@ public class Coordinate {
 
     @Override
     public String toString(){
-        return "column:" + Integer.toString(this.col) + " row:" + Integer.toString(this.row);
+        return "Col:" + Integer.toString(this.col) + " Row:" + Integer.toString(this.row) + "\n";
     }
 }
