@@ -10,6 +10,9 @@ import android.view.MenuInflater;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 /**
  * Created by Johannes Gunnar Heidarsson on 13.9.2014.
  */
@@ -17,8 +20,9 @@ public class PlayActivity extends Activity {
     private PuzzleReference currentPuzzle;
     private BoardView boardView;
     private Global global;
-    private PuzzleTimer puzzleTimer;
-    private TextView timer;
+    private Timer timer;
+    private int seconds = 0;
+    private TextView timerText;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,8 +31,17 @@ public class PlayActivity extends Activity {
 
         this.global = Global.getSingleInstance();
         this.boardView = (BoardView) findViewById(R.id.board_view);
-        this.puzzleTimer = new PuzzleTimer();
-        this.timer = (TextView) findViewById(R.id.puzzle_timer);
+
+        this.timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                seconds += 1;
+                updatePuzzleTimer();
+            }
+        }, 1000, 1000);
+
+        this.timerText = (TextView) findViewById(R.id.puzzle_timer);
 
         Bundle extras = getIntent().getExtras();
 
@@ -56,12 +69,6 @@ public class PlayActivity extends Activity {
     private void setPuzzle(PuzzleReference puzzleReference){
         Puzzle puzzle = global.getPuzzle(puzzleReference);
         if(puzzle != null){
-            puzzleTimer.start(new PuzzleTimerTask(){
-                @Override
-                public void run(){
-                    updatePuzzleTimer();
-                }
-            });
             boardView.setPuzzle(puzzle);
             saveLastPuzzle(puzzleReference);
             showDialog();
@@ -69,7 +76,7 @@ public class PlayActivity extends Activity {
     }
 
     private void updatePuzzleTimer(){
-        this.timer.setText(puzzleTimer.toString());
+        this.timerText.setText("");
     }
 
     private void showDialog(){
