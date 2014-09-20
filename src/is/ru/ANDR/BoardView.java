@@ -109,31 +109,33 @@ public class BoardView extends View {
                 canvas.drawRect(this.rect, this.paintGrid);
             }
         }
-        for(CellPath cellPath : this.cellPaths){
-            this.paintCircle.setColor(cellPath.getColor());
-            for (Circle c : cellPath.getCircleList()){
-                float radius = this.cellWidth / 4;
-                canvas.drawCircle(colToX(c.getColumn()) + this.cellWidth/2, rowToY(c.getRow()) + this.cellHeight/2, radius, this.paintCircle);
-            }
-        }
 
-
-
-        for(CellPath cellPath : this.cellPaths) {
-            this.path.reset();
-            if (!cellPath.isEmpty()) {
-                List<Coordinate> coordinateList = cellPath.getCoordinates();
-                Coordinate coordinate = coordinateList.get(0);
-                this.path.moveTo(colToX(coordinate.getCol()) + this.cellWidth / 2, rowToY(coordinate.getRow()) + this.cellHeight / 2);
-                for (int i = 1; i < coordinateList.size(); ++i) {
-                    coordinate = coordinateList.get(i);
-                    this.path.lineTo(colToX(coordinate.getCol()) + this.cellWidth / 2, rowToY(coordinate.getRow()) + this.cellHeight / 2);
+        if(!isInEditMode()) {
+            for (CellPath cellPath : this.cellPaths) {
+                this.paintCircle.setColor(cellPath.getColor());
+                for (Circle c : cellPath.getCircleList()) {
+                    float radius = this.cellWidth / 4;
+                    canvas.drawCircle(colToX(c.getColumn()) + this.cellWidth / 2, rowToY(c.getRow()) + this.cellHeight / 2, radius, this.paintCircle);
                 }
-                this.paintPath.setColor(cellPath.getColor());
-                canvas.drawPath(this.path, this.paintPath);
             }
 
+            for (CellPath cellPath : this.cellPaths) {
+                this.path.reset();
+                if (!cellPath.isEmpty()) {
+                    List<Coordinate> coordinateList = cellPath.getCoordinates();
+                    Coordinate coordinate = coordinateList.get(0);
+                    this.path.moveTo(colToX(coordinate.getCol()) + this.cellWidth / 2, rowToY(coordinate.getRow()) + this.cellHeight / 2);
+                    for (int i = 1; i < coordinateList.size(); ++i) {
+                        coordinate = coordinateList.get(i);
+                        this.path.lineTo(colToX(coordinate.getCol()) + this.cellWidth / 2, rowToY(coordinate.getRow()) + this.cellHeight / 2);
+                    }
+                    this.paintPath.setColor(cellPath.getColor());
+                    canvas.drawPath(this.path, this.paintPath);
+                }
+
+            }
         }
+
     }
 
     @Override
