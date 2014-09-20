@@ -35,6 +35,13 @@ public class Global {
         return null;
     }
 
+    public Puzzle getPuzzle(PuzzleReference puzzleReference){
+        return getPuzzle(puzzleReference.getPackId(), puzzleReference.getChallengeId(), puzzleReference.getPuzzleId());
+    }
+
+    public Puzzle getNextPuzzle(PuzzleReference puzzleReference){
+        return getPuzzle(puzzleReference.getPackId(), puzzleReference.getChallengeId(), puzzleReference.getPuzzleId() + 1);
+    }
 
     public void setPacks(List<Pack> packs) { this.packs = packs; }
 }

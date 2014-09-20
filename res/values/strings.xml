@@ -5,4 +5,7 @@
     <string name="menu_play">Play</string>
     <string name="menu_time_trial">Time trial</string>
     <string name="menu_settings">Settings</string>
+    <string name="puzzle_continue">Continue</string>
+    <string name="puzzle_quit">Quit</string>
+    <string name="puzzle_dialog_text">Continue to next puzzle?</string>
 </resources>

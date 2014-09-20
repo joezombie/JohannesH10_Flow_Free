@@ -34,9 +34,15 @@ public class BoardView extends View {
 
     private boolean audioOn;
     private Context context;
+    private PlayActivity playActivity;
 
     public BoardView(Context context, AttributeSet attrs){
         super(context, attrs);
+
+        if(context instanceof  PlayActivity){
+            playActivity = (PlayActivity) context;
+        }
+
         this.context = context;
         this.paintGrid.setStyle(Paint.Style.STROKE);
         this.paintGrid.setColor(Color.GRAY);
@@ -59,6 +65,8 @@ public class BoardView extends View {
 
     public void setPuzzle(Puzzle puzzle){
         if (puzzle != null){
+            this.cellPaths.clear();
+            this.colorIndex = 0;
             this.NUMBER_OF_CELLS = puzzle.getSize();
 
             for(Flow flow : puzzle.getFlows()){
@@ -185,13 +193,15 @@ public class BoardView extends View {
 
                             Toast toast = Toast.makeText(context, text, duration);
                             toast.show();
+
+                            if(playActivity != null){
+                                playActivity.getNextPuzzle();
+                            }
                         }
                     }
                     invalidate();
                 }
             }
-
-
         }
 
         return true;
