@@ -58,8 +58,16 @@ public class BoardView extends View {
         this.paintCircle.setStyle(Paint.Style.FILL_AND_STROKE);
         this.paintCircle.setStrokeWidth(4);
 
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        this.audioOn = pref.getBoolean("board_audio", true);
+        if(isInEditMode()){
+            this.cellPaths = new ArrayList<CellPath>();
+            this.cellPaths.add(new CellPath(new Coordinate(0,0), new Coordinate(4,4), Color.BLUE));
+            this.cellPaths.add(new CellPath(new Coordinate(2,3), new Coordinate(3,2), Color.YELLOW));
+            this.currentCellPath = cellPaths.get(0);
+            this.audioOn = true;
+        }else {
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+            this.audioOn = pref.getBoolean("board_audio", true);
+        }
 
     }
 
@@ -174,14 +182,10 @@ public class BoardView extends View {
                 Coordinate lastCoordinate = currentCellPath.getLastCoordinate();
                 if (areNeighbours(lastCoordinate.getCol(), lastCoordinate.getRow(), c, r)) {
                     currentCellPath.addCoordinate(newCoordinate);
+                    invalidate();
                     if(currentCellPath.isConnected()){
                         if(audioOn){
-                            //TODO
-                            CharSequence text = "Connected :)";
-                            int duration = Toast.LENGTH_SHORT;
-
-                            Toast toast = Toast.makeText(context, text, duration);
-                            toast.show();
+                            playActivity.flowConnected();
                         }
                         boolean allConnected = true;
                         for(CellPath cellPath : cellPaths){
@@ -189,19 +193,12 @@ public class BoardView extends View {
                         }
 
                         if(allConnected){
-                            //TODO
-                            CharSequence text = "ALL Connected!!! :)";
-                            int duration = Toast.LENGTH_SHORT;
-
-                            Toast toast = Toast.makeText(context, text, duration);
-                            toast.show();
-
                             if(playActivity != null){
-                                playActivity.getNextPuzzle();
+                                playActivity.puzzleDone();
                             }
                         }
                     }
-                    invalidate();
+
                 }
             }
         }

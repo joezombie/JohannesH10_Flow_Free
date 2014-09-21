@@ -25,4 +25,9 @@ public class PuzzleReference {
     public int getPuzzleId() {
         return puzzleId;
     }
+
+    public String getWhereString(){
+        return String.format("pack_id=%d AND challenge_id=%d AND puzzle_id=%d",
+                              getPackId(),getChallengeId(),getPuzzleId());
+    }
 }

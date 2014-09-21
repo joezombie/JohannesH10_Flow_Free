@@ -10,6 +10,7 @@ public class Puzzle {
     int id;
     int size;
     List<Flow> flows;
+    int bestTime = 0;
 
     public Puzzle(int id, int size){
         this.id = id;
@@ -39,11 +40,20 @@ public class Puzzle {
         return size;
     }
 
+    public int getBestTime() { return bestTime; }
+
+    public void setBestTime(int bestTime) { this.bestTime = bestTime; }
+
+    public String bestTimeToString() {
+        return String.format("%02d:%02d", bestTime / 60, bestTime % 60);
+    }
+
     @Override
     public String toString(){
         String result = "";
         result += "ID: " + Integer.toString(id) + "\n";
         result += "Size: " + Integer.toString(size) + "\n";
+        result += "BestTime:" + Integer.toString(bestTime) + "\n";
         result += "Flows:\n";
         for(Flow flow : flows){
             result += flow.toString();

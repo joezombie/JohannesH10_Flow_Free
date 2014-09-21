@@ -3,6 +3,7 @@ package is.ru.ANDR;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.util.Log;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends Activity {
+    Global global;
     /**
      * Called when the activity is first created.
      */
@@ -31,14 +33,14 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        Global global = Global.getSingleInstance();
+        this.global = Global.getSingleInstance();
 
         try{
             global.setPacks( readPacks( getAssets().open("packs/packs.xml") ) );
+            readBestTimes();
         } catch (IOException e){
             e.printStackTrace();
         }
-
     }
 
     public void continueFromLast(View view){
@@ -165,6 +167,30 @@ public class MainActivity extends Activity {
         }
 
         return result;
+    }
+
+    private void readBestTimes(){
+        PuzzleAdapter puzzleAdapter = new PuzzleAdapter(this);
+        Cursor cursor = puzzleAdapter.queryPuzzles();
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    PuzzleReference puzzleReference = new PuzzleReference(
+                            cursor.getInt(cursor.getColumnIndex(DbHelper.TablePuzzlesCols[1])),
+                            cursor.getInt(cursor.getColumnIndex(DbHelper.TablePuzzlesCols[2])),
+                            cursor.getInt(cursor.getColumnIndex(DbHelper.TablePuzzlesCols[3])));
+                    int bestTime = cursor.getInt(cursor.getColumnIndex(DbHelper.TablePuzzlesCols[4]));
+
+                    Puzzle puzzle = global.getPuzzle(puzzleReference);
+                    if (puzzle != null) {
+                        puzzle.setBestTime(bestTime);
+                    }
+
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            cursor.close();
+        }
     }
 
 }

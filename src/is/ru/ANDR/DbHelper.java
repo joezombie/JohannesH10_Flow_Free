@@ -10,8 +10,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DbHelper extends SQLiteOpenHelper {
     public static final String DB_NAME = "PUZZLES_DB";
     public static final int DB_VERSION = 1;
-    public static final String tablePuzzles = "puzzles";
-    public static final String[] tablePuzzlesCols = {"_id", "pack_id", "challenge_id", "puzzle_id", "last_time"};
+    public static final String TablePuzzles = "puzzles";
+    public static final String[] TablePuzzlesCols = {"_id", "pack_id", "challenge_id", "puzzle_id", "best_time"};
 
     private static final String sqlCreateTablePuzzles =
             "CREATE TABLE puzzles(" +
@@ -19,7 +19,7 @@ public class DbHelper extends SQLiteOpenHelper {
             "pack_id INTEGER NOT NULL," +
             "challenge_id INTEGER NOT NULL," +
             "puzzle_id INTEGER NOT NULL," +
-            "last_time TEXT"+
+            "best_time INTEGER NOT NULL"+
             ");";
 
     private static final String sqlDropTablePuzzles =

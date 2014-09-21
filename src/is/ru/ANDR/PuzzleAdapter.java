@@ -31,43 +31,59 @@ public class PuzzleAdapter {
 
     public void close(){ db.close(); }
 
-    public long insertPuzzle( PuzzleReference puzzleReference, String lastTime){
-        String[] cols = DbHelper.tablePuzzlesCols;
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(cols[1], puzzleReference.getPackId());
-        contentValues.put(cols[2], puzzleReference.getChallengeId());
-        contentValues.put(cols[3], puzzleReference.getPuzzleId());
-        openToWrite();
-        long value = db.insert(DbHelper.tablePuzzles, null, contentValues);
-        close();
-        return value;
+    public long insertPuzzle( PuzzleReference puzzleReference, int bestTime){
+        Cursor cursor = queryPuzzle(puzzleReference);
+        if(cursor.getCount() == 0) {
+            String[] cols = DbHelper.TablePuzzlesCols;
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(cols[1], puzzleReference.getPackId());
+            contentValues.put(cols[2], puzzleReference.getChallengeId());
+            contentValues.put(cols[3], puzzleReference.getPuzzleId());
+            contentValues.put(cols[4], bestTime);
+            openToWrite();
+            long value = db.insert(DbHelper.TablePuzzles, null, contentValues);
+            close();
+            return value;
+        } else {
+            return -1;
+        }
 
     }
 
-    public long updatePuzzle(PuzzleReference puzzleReference, String lastTime){
-        String[] cols = DbHelper.tablePuzzlesCols;
+    public long updatePuzzle(PuzzleReference puzzleReference, int bestTime){
+        String[] cols = DbHelper.TablePuzzlesCols;
         ContentValues contentValues = new ContentValues();
         contentValues.put(cols[1], puzzleReference.getPackId());
         contentValues.put(cols[2], puzzleReference.getChallengeId());
         contentValues.put(cols[3], puzzleReference.getPuzzleId());
+        contentValues.put(cols[4], bestTime);
         openToWrite();
-        //cols[1] + sid ?
-        long value = db.update(DbHelper.tablePuzzles, contentValues, cols[1], null);
+
+        long value = db.update(DbHelper.TablePuzzles, contentValues, puzzleReference.getWhereString(), null);
         close();
         return value;
     }
 
     public Cursor queryPuzzles(){
         openToRead();
-        return db.query(DbHelper.tablePuzzles, DbHelper.tablePuzzlesCols, null, null, null, null, null);
+        return db.query(DbHelper.TablePuzzles, DbHelper.TablePuzzlesCols, null, null, null, null, null);
     }
 
 
-    public Cursor queryPuzzle(){
+    public Cursor queryPuzzle(PuzzleReference puzzleReference){
         openToRead();
-        String[] cols = DbHelper.tablePuzzlesCols;
-        // cols[1] + "" + sid ??
-        return db.query(DbHelper.tablePuzzles, cols, cols[1], null, null, null, null);
+        return  db.query(DbHelper.TablePuzzles, DbHelper.TablePuzzlesCols, puzzleReference.getWhereString(), null, null, null, null);
     }
 
+    public Cursor queryPuzzleInPack(int packId){
+        openToRead();
+        String where = String.format("pack_id=%d", packId);
+        return  db.query(DbHelper.TablePuzzles, DbHelper.TablePuzzlesCols, where, null, null, null, null);
+    }
+
+    public Cursor queryPuzzleInChallenge(int packId, int challengeId){
+        openToRead();
+        String where = String.format("pack_id=%d AND challenge_id=%d", packId, challengeId);
+        return db.query(DbHelper.TablePuzzles, DbHelper.TablePuzzlesCols, where, null, null, null, null);
+    }
 }

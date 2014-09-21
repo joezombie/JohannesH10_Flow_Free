@@ -7,5 +7,7 @@
     <string name="menu_settings">Settings</string>
     <string name="puzzle_continue">Continue</string>
     <string name="puzzle_quit">Quit</string>
+    <string name="puzzle_dialog_title">Continue</string>
     <string name="puzzle_dialog_text">Continue to next puzzle?</string>
+    <string name="puzzle_dialog_completed_in">You completed the puzzle in </string>
 </resources>

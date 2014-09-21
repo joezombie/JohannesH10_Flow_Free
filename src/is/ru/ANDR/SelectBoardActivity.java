@@ -67,7 +67,7 @@ public class SelectBoardActivity extends Activity {
             List<String> puzzles = new ArrayList<String>();
             for(Challenge challenge : pack.getChallenges()){
                 for(Puzzle puzzle : challenge.getPuzzles()){
-                    String puzzleName = challenge.name + " Level " + Integer.toString(puzzle.getId());
+                    String puzzleName = challenge.name + " Level " + Integer.toString(puzzle.getId()) + " - best time: " + puzzle.bestTimeToString();
                     puzzles.add(puzzleName);
                     puzzleMap.put(puzzleName, new PuzzleReference(pack.id, challenge.id, puzzle.id));
                 }
