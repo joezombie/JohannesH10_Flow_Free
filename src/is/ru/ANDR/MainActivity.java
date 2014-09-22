@@ -63,7 +63,16 @@ public class MainActivity extends Activity {
     }
 
     public void selectBoardTimeTrial(View view){
+        Intent intent = new Intent(this, PlayActivity.class);
 
+        SharedPreferences lastPuzzle = getSharedPreferences( "last_puzzle", MODE_PRIVATE );
+
+        intent.putExtra("pack_id", lastPuzzle.getInt("pack_id", 1));
+        intent.putExtra("challenge_id", lastPuzzle.getInt("challenge_id", 1));
+        intent.putExtra("puzzle_id", lastPuzzle.getInt("puzzle_id", 1));
+        intent.putExtra("time_trial", true);
+        intent.putExtra("time_trial_seconds", 30);
+        startActivity(intent);
     }
 
     public void settings(View view){

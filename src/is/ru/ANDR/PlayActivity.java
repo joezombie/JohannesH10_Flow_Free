@@ -36,6 +36,8 @@ public class PlayActivity extends Activity {
     private TextView oldTimeText;
     private static SoundPool soundPool;
     private static int SoundBump;
+    private boolean isTimeTrial;
+    private int finishedPuzzles;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,23 +56,37 @@ public class PlayActivity extends Activity {
 
         Bundle extras = getIntent().getExtras();
 
-        this.currentPuzzle = new PuzzleReference(extras.getInt("pack_id"),
-                                                 extras.getInt("challenge_id"),
-                                                 extras.getInt("puzzle_id"));
+        this.currentPuzzle = new PuzzleReference(extras.getInt("pack_id", 0),
+                                                 extras.getInt("challenge_id", 0),
+                                                 extras.getInt("puzzle_id", 0));
+
+        this.isTimeTrial = extras.getBoolean("time_trial", false);
+
+        if(isTimeTrial){
+            this.seconds = extras.getInt("time_trial_seconds", 0);
+            this.finishedPuzzles = 0;
+            oldTimeText.setText(secondsToString(seconds));
+            startTimeTrialTimer();
+        }
 
         setPuzzle(currentPuzzle);
     }
 
     public void puzzleDone(){
-        stopPuzzleTimer();
-        showDialog();
+        if(isTimeTrial){
+            setPuzzle(getNextPuzzle());
+            finishedPuzzles += 1;
+        }else {
+            stopPuzzleTimer();
+            showDialog();
 
-        PuzzleAdapter puzzleAdapter = new PuzzleAdapter(this);
-        Puzzle puzzle = global.getPuzzle(currentPuzzle);
-        if(seconds < puzzle.getBestTime() || puzzle.getBestTime() < 1){
-            puzzle.setBestTime(seconds);
-            if(puzzleAdapter.insertPuzzle(currentPuzzle, seconds) < 0){
-                puzzleAdapter.updatePuzzle(currentPuzzle, seconds);
+            PuzzleAdapter puzzleAdapter = new PuzzleAdapter(this);
+            Puzzle puzzle = global.getPuzzle(currentPuzzle);
+            if (seconds < puzzle.getBestTime() || puzzle.getBestTime() < 1) {
+                puzzle.setBestTime(seconds);
+                if (puzzleAdapter.insertPuzzle(currentPuzzle, seconds) < 0) {
+                    puzzleAdapter.updatePuzzle(currentPuzzle, seconds);
+                }
             }
         }
     }
@@ -103,10 +119,12 @@ public class PlayActivity extends Activity {
         if(puzzle != null){
             boardView.setPuzzle(puzzle);
             boardView.invalidate();
-            startPuzzleTimer();
-            updatePuzzleTimer();
+            if(!isTimeTrial) {
+                startPuzzleTimer();
+                updatePuzzleTimer();
+                oldTimeText.setText(puzzle.bestTimeToString());
+            }
             titleText.setText(global.getPuzzleDisplayName(currentPuzzle));
-            oldTimeText.setText(puzzle.bestTimeToString());
             saveLastPuzzle(puzzleReference);
         }else {
             quit();
@@ -131,6 +149,22 @@ public class PlayActivity extends Activity {
 
     }
 
+    private void startTimeTrialTimer(){
+        timer = new Timer();
+        timer.scheduleAtFixedRate( new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        seconds -= 1;
+                        updatePuzzleTimer();
+                    }
+                });
+            }
+        }, 1000, 1000);
+    }
+
     private void stopPuzzleTimer(){
         if(timer != null) {
             timer.cancel();
@@ -138,11 +172,17 @@ public class PlayActivity extends Activity {
     }
 
     private void updatePuzzleTimer(){
-        this.timerText.setText(secondsToString());
+        this.timerText.setText(secondsToString(seconds));
+        if(isTimeTrial){
+            if(seconds < 1){
+                stopPuzzleTimer();
+                showTimeTrialDialog();
+            }
+        }
     }
 
     private void showDialog(){
-        String message = getString(R.string.puzzle_dialog_completed_in) + " " + secondsToString() + "\n"
+        String message = getString(R.string.puzzle_dialog_completed_in) + " " + secondsToString(seconds) + "\n"
                        + getString(R.string.puzzle_dialog_text);
         new AlertDialog.Builder(this)
             .setTitle(R.string.puzzle_dialog_title)
@@ -162,16 +202,38 @@ public class PlayActivity extends Activity {
             .show();
     }
 
+    private void showTimeTrialDialog(){
+        Bundle extras = getIntent().getExtras();
+        final int timeTrialSeconds = extras.getInt("time_trial_seconds", 0);
+        String message = String.format(getString(R.string.puzzle_dialog_time_trial_text), finishedPuzzles);
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.puzzle_dialog_title)
+                .setMessage(message)
+                .setPositiveButton(R.string.puzzle_retry, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //TODO
+                        seconds = timeTrialSeconds;
+                        startTimeTrialTimer();
+                        setPuzzle(new PuzzleReference(1, 1, 1));
+                    }
+                })
+                .setNegativeButton(R.string.puzzle_quit, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        quit();
+                    }
+                })
+                .show();
+    }
+
     private void quit(){
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
-    private String secondsToString(){
-        return intToSecOrMin(seconds/60) + ":" + intToSecOrMin(seconds%60);
+    private String secondsToString(int seconds){
+        return String.format("%02d:%02d", seconds / 60, seconds % 60);
     }
 
-    private String intToSecOrMin(int t){
-        return t < 10 ? "0" + Integer.toString(t) : Integer.toString(t);
-    }
 }

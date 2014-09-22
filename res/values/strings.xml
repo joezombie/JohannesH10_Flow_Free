@@ -8,6 +8,8 @@
     <string name="puzzle_continue">Continue</string>
     <string name="puzzle_quit">Quit</string>
     <string name="puzzle_dialog_title">Continue</string>
+    <string name="puzzle_retry">Retry</string>
     <string name="puzzle_dialog_text">Continue to next puzzle?</string>
     <string name="puzzle_dialog_completed_in">You completed the puzzle in </string>
+    <string name="puzzle_dialog_time_trial_text">You completed %d puzzles in the given time</string>
 </resources>
