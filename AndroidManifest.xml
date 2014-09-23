@@ -16,5 +16,14 @@
         <activity android:name=".PlayActivity"/>
         <activity android:name=".SettingsActivity" android:label="Settings"/>
         <activity android:name=".TimeTrialActivity" android:label="Time Trial"/>
+        <activity
+            android:name=".TimeTrialActivity"
+            android:label="Time Trial"/>
+        <activity
+            android:name=".TimeTrialActivity"
+            android:label="Time Trial"/>
+        <activity
+            android:name=".TimeTrialChallengeActivity"
+            android:label="Time Trial"/>
     </application>
 </manifest>
