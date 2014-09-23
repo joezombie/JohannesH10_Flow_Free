@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Flow Free</string>
-    <string name="menu_continue_from_last">Continue from last</string>
+    <string name="menu_continue_from_last">Continue</string>
     <string name="menu_play">Play</string>
     <string name="menu_time_trial">Time trial</string>
     <string name="menu_settings">Settings</string>
