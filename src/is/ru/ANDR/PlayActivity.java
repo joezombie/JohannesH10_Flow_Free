@@ -236,4 +236,18 @@ public class PlayActivity extends Activity {
         return String.format("%02d:%02d", seconds / 60, seconds % 60);
     }
 
+    @Override
+    public void onPause(){
+        stopPuzzleTimer();
+        finish();
+        super.onPause();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+    }
+
+
+
 }

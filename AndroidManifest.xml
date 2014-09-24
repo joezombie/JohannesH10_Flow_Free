@@ -12,18 +12,12 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".SelectBoardActivity" android:label="Select Board"/>
+        <activity android:name=".SelectBoardActivity" android:label="Select puzzle"/>
         <activity android:name=".PlayActivity"/>
         <activity android:name=".SettingsActivity" android:label="Settings"/>
-        <activity android:name=".TimeTrialActivity" android:label="Time Trial"/>
-        <activity
-            android:name=".TimeTrialActivity"
-            android:label="Time Trial"/>
-        <activity
-            android:name=".TimeTrialActivity"
-            android:label="Time Trial"/>
-        <activity
-            android:name=".TimeTrialChallengeActivity"
-            android:label="Time Trial"/>
+        <activity android:name=".TimeTrialActivity" android:label="Select time"/>
+        <activity android:name=".TimeTrialChallengeActivity" android:label="Select challenge"/>
+
+
     </application>
 </manifest>

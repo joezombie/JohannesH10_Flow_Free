@@ -40,13 +40,14 @@ public class TimeTrialChallengeActivity extends ListActivity {
 
     @Override
     protected void onListItemClick(ListView listView, View view, int position, long id){
+        Bundle extras = getIntent().getExtras();
         Intent intent = new Intent(this, PlayActivity.class);
         PuzzleReference puzzleReference = map.get(challenges.get(position));
         intent.putExtra("pack_id", puzzleReference.getPackId());
         intent.putExtra("challenge_id", puzzleReference.getChallengeId());
         intent.putExtra("puzzle_id", puzzleReference.getPuzzleId());
         intent.putExtra("time_trial", true);
-        intent.putExtra("time_trial_seconds", 30);
+        intent.putExtra("time_trial_seconds", extras.getInt("time_trial_seconds", 30));
         startActivity(intent);
     }
 }

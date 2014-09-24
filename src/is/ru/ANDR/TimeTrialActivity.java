@@ -36,8 +36,8 @@ public class TimeTrialActivity extends ListActivity {
 
     @Override
     protected void onListItemClick(ListView listView, View view, int position, long id){
-        Toast.makeText(this, times.get(position).toString(), Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, TimeTrialChallengeActivity.class);
+        intent.putExtra("time_trial_seconds", times.get(position).seconds);
         startActivity(intent);
     }
 
